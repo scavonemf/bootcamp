@@ -8,7 +8,7 @@ const App = (props) => {
   const [notes, setNotes] = useState(props.notes)
 
   const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(true)
 
   const handleChange = (event) => {
     setNewNote(event.target.value)
