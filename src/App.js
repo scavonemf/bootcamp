@@ -18,10 +18,6 @@ const App = () => {
       })
   }, [])
 
-
-
-
-
   if (!notes) {
     return 'not notes'
   }
