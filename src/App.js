@@ -1,14 +1,23 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
 import { Note } from './components/note'
+import { getAllNotes, createNote } from './service/serviceNotes'
 
 
-
-const App = (props) => {
-
-  const [notes, setNotes] = useState(props.notes)
-
+const App = () => {
+  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
+  const [loading, setLoading] = useState(false)
+
+
+  useEffect(() => {
+    setLoading(true)
+    getAllNotes()
+      .then(response => {
+        setNotes(response)
+        setLoading(false)
+      })
+  }, [])
 
   const handleChange = (event) => {
     setNewNote(event.target.value)
@@ -19,35 +28,35 @@ const App = (props) => {
     event.preventDefault()
 
     const noteToAddToState = {
-      id: notes.length + 1,
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() < 0.5
+      title: newNote,
+      body: newNote,
+      userId: 1
     }
 
-    // setNotes(notes.concat(noteToAddToState))
-    setNotes([...notes, noteToAddToState])
+    setNotes(notes.concat(noteToAddToState)) //for faster render
+
+    createNote(noteToAddToState)
+      .then(newNote =>
+        setNotes([...notes, newNote])
+      )
+
     setNewNote('')
   }
 
-  const handleShowAll = () => {
-    setShowAll(() => !showAll)
-  }
 
-  // if (!notes) {
-  //   return 'not notes'
-  // }
+
+  if (!notes) {
+    return 'not notes'
+  }
 
   return (
     <div className="App">
       <h1>Notes</h1>
-      <button onClick={handleShowAll}>
-        {showAll ? "Show only important" : "Show All"}
-      </button>
+      {loading ? 'Cargando...' : null}
       <ol>
         {notes
           .map(note =>
-            <Note key={note.id} content={note.content} date={note.date} />
+            <Note key={note.id} {...note} />
           )}
       </ol>
 
