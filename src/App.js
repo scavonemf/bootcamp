@@ -25,8 +25,6 @@ const App = (props) => {
       important: Math.random() < 0.5
     }
 
-    console.log(noteToAddToState)
-
     // setNotes(notes.concat(noteToAddToState))
     setNotes([...notes, noteToAddToState])
     setNewNote('')
@@ -48,10 +46,6 @@ const App = (props) => {
       </button>
       <ol>
         {notes
-          .filter(note => {
-            if (showAll === true) return true;
-            return note.important === true
-          })
           .map(note =>
             <Note key={note.id} content={note.content} date={note.date} />
           )}
