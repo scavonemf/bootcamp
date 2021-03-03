@@ -8,6 +8,7 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
 
   useEffect(() => {
@@ -35,10 +36,15 @@ const App = () => {
 
     setNotes(notes.concat(noteToAddToState)) //for faster render
 
+    setError('')
     createNote(noteToAddToState)
       .then(newNote =>
         setNotes([...notes, newNote])
       )
+      .catch(error => {
+        console.error(error)
+        setError('The note could not be created')
+      })
 
     setNewNote('')
   }
@@ -60,10 +66,14 @@ const App = () => {
           )}
       </ol>
 
+      {error && <span style={{ color: 'red' }}>{error}</span>}
+
       <form onSubmit={handleSubmit}>
         <input value={newNote} type="text" onChange={handleChange} />
         <button>Create note</button>
       </form>
+
+
     </div>
   );
 }
