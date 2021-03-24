@@ -1,9 +1,11 @@
 // const http = require('http') //common js
 
-const { request, response } = require('express')
+// const { request, response } = require('express')
 const express = require('express')
 
 const app = express()
+
+app.use(express.json())
 
 const notes = [
   {
@@ -68,11 +70,23 @@ app.delete('/api/notes/:id', (request, response) => {
   response.status(204).end()
 })
 
-app.post('/api/notes/:id', (request, response) => {
+app.post('/api/notes', (request, response) => {
   const note = request.body
-  console.log(note)
+  // console.log(note)
 
-  response.json(note)
+  const ids = notes.map(note => note.id)
+  const maxId = Math.max(...ids)
+
+  const newNote = {
+    id: maxId + 1,
+    content: note.content,
+    important: note.important || false,
+    date: new Date().toISOString()
+  }
+
+  // notes = [...notes, newNote]
+  notes = notes.concat(newNote)
+  response.json(newNote)
 })
 
 
