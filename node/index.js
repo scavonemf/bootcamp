@@ -1,7 +1,10 @@
 // const http = require('http') //common js
 
 // const { request, response } = require('express')
+const { request, response } = require('express')
 const express = require('express')
+
+const logger = require('./loggerMiddleware')
 
 const app = express()
 
@@ -40,6 +43,17 @@ const notes = [
 //   response.end(JSON.stringify(notes))
 // })
 
+// app.use((request, response, next) => {
+//   console.log(request.path)
+//   console.log(request.body)
+//   console.log(request.method)
+//   console.log("------")
+//   next()
+// })
+
+
+app.use(logger)
+
 app.get('/', (request, response) => {
   response.send('<h1>hello world </h1>')
 })
@@ -66,7 +80,7 @@ app.get('/api/notes/:id', (request, response) => {
 
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
+  const notes = notes.filter(note => note.id !== id)
   response.status(204).end()
 })
 
@@ -85,8 +99,14 @@ app.post('/api/notes', (request, response) => {
   }
 
   // notes = [...notes, newNote]
-  notes = notes.concat(newNote)
+  const notes = notes.concat(newNote)
   response.json(newNote)
+})
+
+app.use((request, response) => {
+  response.status(404).json({
+    error: 'not found'
+  })
 })
 
 
