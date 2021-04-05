@@ -7,9 +7,9 @@ const notesSchema = new mongoose.Schema({
   important: Boolean
 })
 
-notesSchema.set('toJSON', {
+notesSchema.set('toJSON', { //delete elements for the note
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id
+    returnedObject.id = returnedObject._id //transform elements
     delete returnedObject._id
     delete returnedObject.__v
   }

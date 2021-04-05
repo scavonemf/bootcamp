@@ -6,13 +6,13 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 
-const Note = require('./models/note') //import the note
+const notFound = require('./middleware/notFound')
+const handleErrors = require('./middleware/handleErrors')
 
+const Note = require('./models/note') //import the note
 
 app.use(cors())
 app.use(express.json())
-
-let notes = []
 
 
 app.get('/', (request, response) => {
@@ -25,26 +25,20 @@ app.get('/api/notes', (request, response) => {
   })
 })
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  // response.send(id)
-  const note = notes.find(note => note.id === id)
+app.get('/api/notes/:id', (request, response, next) => {
 
+  const { id } = request.params
 
-  if (note) {
-    response.json(note)
-  } else {
-    response.status(404).end()
-  }
-  console.log({ note })
-
-})
-
-
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const notes = notes.filter(note => note.id !== id)
-  response.status(204).end()
+  Note.findById(id).then(note => {
+    if (note) {
+      response.json(note)
+    } else {
+      response.status(404).end()
+    }
+  })
+  .catch(err => {
+    next(err)
+  })
 })
 
 app.post('/api/notes', (request, response) => {
@@ -63,13 +57,41 @@ app.post('/api/notes', (request, response) => {
   response.json(newNote)
 })
 
-app.use((request, response) => {
-  response.status(404).json({
-    error: 'not found'
+app.put('/api/notes/:id', (request, response, next) => {
+  const note = request.body
+  const {id} = request.params
+
+  const newNoteData = {
+    content: note.content,
+    important: note.important
+  }
+
+  Note.findByIdAndUpdate(id, newNoteData, {new: true})
+    .then(result => {
+      response.json(result)
+    })
+    .catch(err => {
+      next(err)
+    })
+})
+
+app.delete('/api/notes/:id', (request, response, next) => {
+  const { id } = request.params
+
+  Note.findByIdAndRemove(id).then(result => {
+    response.status(204).end()
+  }).catch(err => {
+    next(err)
   })
 })
 
+
+//middlewares
+app.use(notFound)
+app.use(handleErrors)
+
 const PORT = process.env.PORT
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`) //on visual studio
 })
