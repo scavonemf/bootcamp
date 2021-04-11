@@ -20,10 +20,15 @@ app.get('/', (request, response) => {
   response.send('<h1>hello world </h1>')
 })
 
-app.get('/api/notes', (request, response) => {
-  Note.find({}).then(notes => {
+app.get('/api/notes', async (request, response) => {
+  // Note.find({}).then(notes => {
+  //   response.json(notes)
+  // })
+
+  //refactor with async-await
+
+  const notes = await Note.find({})
     response.json(notes)
-  })
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
@@ -42,8 +47,14 @@ app.get('/api/notes/:id', (request, response, next) => {
   })
 })
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', async  (request, response, next) => {
   const note = request.body
+
+  if(!note.content) {
+    return response.status(400).json({
+      error: 'required "content" field is missing'
+    })
+  }
 
   const newNote = new Note ({
     content: note.content,
@@ -51,11 +62,12 @@ app.post('/api/notes', (request, response) => {
     date: new Date().toISOString()
   })
 
-  newNote.save().then(savedNote => {
-    response.json(savedNote)
-  })
+  // newNote.save().then(savedNote => {
+  //  response.json(savedNote)
+  // })
 
-  //response.send(newNote)
+  const savedNote = await newNote.save()
+  response.json(savedNote)
 })
 
 app.put('/api/notes/:id', (request, response, next) => {

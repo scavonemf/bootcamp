@@ -7,7 +7,7 @@
     "test": "NODE_ENV=test jest --verbose --silent",
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development nodemon index.js",
-    "test:watch": "npm run test -- --watch tests/notes.test.js"
+    "test:watch": "npm run test -- --watch"
   },
   "author": "",
   "license": "ISC",
