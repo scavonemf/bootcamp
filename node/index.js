@@ -13,6 +13,7 @@ const Note = require('./models/note') //import the note
 
 app.use(cors())
 app.use(express.json())
+app.use('/static', express.static('images'))
 
 
 app.get('/', (request, response) => {
@@ -54,7 +55,7 @@ app.post('/api/notes', (request, response) => {
     response.json(savedNote)
   })
 
-  response.json(newNote)
+  //response.send(newNote)
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -92,6 +93,8 @@ app.use(handleErrors)
 
 const PORT = process.env.PORT
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`) //on visual studio
 })
+
+module.exports = {app, server}
