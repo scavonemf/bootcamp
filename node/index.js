@@ -9,8 +9,9 @@ const cors = require('cors')
 const notFound = require('./middleware/notFound')
 const handleErrors = require('./middleware/handleErrors')
 
-const Note = require('./models/note') //import the note
+const Note = require('./models/user') //import the note
 
+const usersRouter = require('./controllers/users')
 app.use(cors())
 app.use(express.json())
 app.use('/static', express.static('images'))
@@ -98,6 +99,8 @@ app.delete('/api/notes/:id', (request, response, next) => {
   })
 })
 
+
+app.use('/api/users', usersRouter)
 
 //middlewares
 app.use(notFound)

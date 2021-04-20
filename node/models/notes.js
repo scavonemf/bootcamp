@@ -1,10 +1,14 @@
 
-const mongoose = require('mongoose')
+const {Schema , model} = require('mongoose')
 
-const notesSchema = new mongoose.Schema({
+const notesSchema = Schema({
   content: String,
   date: Date,
-  important: Boolean
+  important: Boolean,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 notesSchema.set('toJSON', { //delete elements for the note
@@ -15,7 +19,7 @@ notesSchema.set('toJSON', { //delete elements for the note
   }
 })
 
-const Note = mongoose.model('Note', notesSchema)
+const Note = model('Note', notesSchema)
 
 module.exports = Note
 
