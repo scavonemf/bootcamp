@@ -11,7 +11,7 @@ const UserSchema = new Schema({
   }]
 })
 
-userSchema.set('toJSON', { //delete elements for the note
+UserSchema.set('toJSON', { //delete elements for the note
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id //transform elements
     delete returnedObject._id
